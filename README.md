@@ -1,1 +1,865 @@
-# dist34.github.io
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mayank-Bhardwaj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e0a;
+    --bg2: #0d120d;
+    --card: #111811;
+    --card2: #141c14;
+    --border: #1e2e1e;
+    --green: #00ff88;
+    --green2: #00cc66;
+    --green-dim: #00ff8822;
+    --green-glow: #00ff8844;
+    --text: #c8d8c8;
+    --text-dim: #6a8a6a;
+    --white: #e8f0e8;
+    --accent: #ff6b6b;
+    --blue: #64b5f6;
+    --yellow: #ffd54f;
+    --font-mono: 'JetBrains Mono', 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--green); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, opacity 0.2s;
+    box-shadow: 0 0 12px var(--green), 0 0 30px var(--green-glow);
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--green); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease-out;
+    opacity: 0.5;
+  }
+
+  /* ── CANVAS BACKGROUND ── */
+  #bg-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(10,14,10,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-size: 14px; color: var(--green);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--text-dim); }
+
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none;
+    font-size: 13px; transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::before {
+    content: '$ '; color: var(--green); opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-links a:hover::before { opacity: 1; }
+
+  .nav-cta {
+    background: var(--green); color: #000 !important;
+    padding: 8px 20px; border-radius: 4px;
+    font-weight: 700; font-size: 12px !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+  .nav-cta:hover {
+    background: #fff !important;
+    box-shadow: 0 0 30px var(--green);
+    transform: translateY(-1px);
+  }
+  .nav-cta::before { display: none !important; }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 100px 40px;
+  }
+
+  /* ── HERO ── */
+  #hero { flex-direction: column; }
+
+  .terminal-window {
+    background: #0d0f0d;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: min(760px, 90vw);
+    box-shadow: 0 40px 120px rgba(0,255,136,0.08), 0 0 0 1px var(--border);
+    overflow: hidden;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .terminal-titlebar {
+    background: #111811;
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+  .terminal-title {
+    margin-left: auto; margin-right: auto;
+    font-size: 12px; color: var(--text-dim);
+  }
+
+  .terminal-body { padding: 28px; }
+
+  .cmd { color: var(--green); font-size: 14px; margin-bottom: 4px; }
+  .cmd::before { content: '$ '; }
+
+  .hero-name {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 700; color: var(--white);
+    letter-spacing: -1px; line-height: 1.1;
+    margin: 8px 0 6px;
+  }
+
+  .hero-role { color: var(--text-dim); font-size: 14px; margin-bottom: 20px; }
+
+  .skills-row {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+  }
+
+  .skill-badge {
+    border: 1px solid var(--border);
+    padding: 5px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text);
+    cursor: default;
+    transition: all 0.2s;
+    background: var(--card2);
+  }
+  .skill-badge:hover {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 12px var(--green-glow);
+    transform: translateY(-2px);
+  }
+
+  .hero-prompt {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 20px; color: var(--text-dim); font-size: 13px;
+  }
+  .blink {
+    display: inline-block; width: 8px; height: 16px;
+    background: var(--green);
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .scroll-hint {
+    margin-top: 48px; text-align: center;
+    color: var(--text-dim); font-size: 12px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    text-align: center; margin-bottom: 64px;
+  }
+  .section-cmd {
+    color: var(--green); font-size: 13px; margin-bottom: 8px;
+  }
+  .section-cmd::before { content: '$ '; }
+  .section-title {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700; color: var(--white);
+  }
+
+  /* ── PROJECTS ── */
+  #projects { background: transparent; }
+  .projects-grid {
+    width: min(1100px, 90vw);
+  }
+
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--green);
+    transform: scaleY(0); transform-origin: top;
+    transition: transform 0.3s;
+  }
+  .project-card:hover {
+    border-color: var(--green2);
+    box-shadow: 0 20px 60px rgba(0,255,136,0.06);
+    transform: translateX(4px);
+  }
+  .project-card:hover::before { transform: scaleY(1); }
+
+  .project-title {
+    font-size: 20px; font-weight: 700; color: var(--white);
+    margin-bottom: 8px;
+  }
+  .project-desc { color: var(--text-dim); font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+
+  .achievements-label {
+    font-size: 12px; font-weight: 700; color: var(--white);
+    margin-bottom: 10px;
+  }
+  .achievements-label::before { content: '// '; color: var(--text-dim); }
+
+  .achievement-list {
+    list-style: none; margin-bottom: 20px;
+  }
+  .achievement-list li {
+    font-size: 13px; color: var(--text);
+    padding: 4px 0; padding-left: 16px;
+    position: relative;
+  }
+  .achievement-list li::before {
+    content: '→'; color: var(--green);
+    position: absolute; left: 0;
+  }
+
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tech-tag {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; color: var(--text-dim);
+  }
+
+  /* ── ACHIEVEMENTS ── */
+  #achievements {
+    background: transparent;
+  }
+
+  .achievements-wrapper { width: min(1100px, 90vw); }
+
+  .ach-category { margin-bottom: 48px; }
+  .ach-category-title {
+    color: var(--green); font-size: 14px; font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .ach-category-title::before { content: '## '; opacity: 0.5; }
+
+  .ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 700px) { .ach-grid { grid-template-columns: 1fr; } }
+
+  .ach-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    transition: all 0.25s;
+  }
+  .ach-card:hover {
+    border-color: var(--green-dim);
+    box-shadow: inset 0 0 40px rgba(0,255,136,0.03);
+  }
+  .ach-card-title {
+    font-size: 14px; font-weight: 700; color: var(--white);
+    margin-bottom: 12px;
+  }
+  .ach-stat {
+    font-size: 12px; color: var(--text-dim);
+    padding: 3px 0;
+  }
+  .ach-stat::before { content: '• '; color: var(--green); }
+
+  /* ── CONTACT ── */
+  #contact { background: transparent; }
+
+  .contact-wrapper {
+    width: min(700px, 90vw);
+  }
+
+  .contact-terminal {
+    background: #0d0f0d;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,255,136,0.06);
+  }
+
+  .contact-terminal .terminal-body { padding: 32px; }
+
+  .contact-row { margin-bottom: 24px; }
+  .contact-label { color: var(--green); font-size: 13px; margin-bottom: 10px; }
+  .contact-label::before { content: '$ '; }
+
+  .contact-value {
+    display: inline-block;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--green);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .contact-value:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+
+  .social-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .social-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+    min-width: 160px;
+  }
+  .social-card:hover {
+    border-color: var(--green);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,255,136,0.1);
+  }
+  .social-icon {
+    width: 36px; height: 36px;
+    background: var(--card);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .social-name { font-size: 13px; font-weight: 700; color: var(--white); }
+  .social-handle { font-size: 11px; color: var(--text-dim); }
+
+  /* FORM */
+  .contact-form { margin-top: 8px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { color: var(--green); font-size: 12px; margin-bottom: 6px; display: block; }
+  .form-label::before { content: '$ '; }
+  .form-input, .form-textarea {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: none;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 16px var(--green-glow);
+  }
+  .form-textarea { height: 100px; }
+
+  .form-submit {
+    background: var(--green);
+    color: #000;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+  .form-submit:hover {
+    background: var(--white);
+    box-shadow: 0 0 30px var(--green);
+    transform: translateY(-1px);
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 12px;
+  }
+  footer span { color: var(--green); }
+</style>
+</head>
+<body>
+
+<!-- LIVE BACKGROUND -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect width="20" height="20" rx="4" fill="#00ff88" fill-opacity="0.1"/>
+      <text x="4" y="14" font-family="monospace" font-size="11" fill="#00ff88">AC</text>
+    </svg>
+    <span>~/Mayank-Bhardwaj</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#hero">whoami</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#achievements">impact</a></li>
+    <li><a href="#contact" class="nav-cta">contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="terminal-window reveal">
+    <div class="terminal-titlebar">
+      <div class="dot dot-red"></div>
+      <div class="dot dot-yellow"></div>
+      <div class="dot dot-green"></div>
+      <span class="terminal-title">alex@macbook: ~/portfolio</span>
+    </div>
+    <div class="terminal-body">
+      <div class="cmd">whoami</div>
+      <h1 class="hero-name">Mayank-Bhardwaj</h1>
+      <p class="hero-role">Data Analyst/AI Engineer</p>
+      <div class="cmd">skills</div>
+      <div class="skills-row">
+        <span class="skill-badge">C++</span>
+        <span class="skill-badge">Python</span>
+        <span class="skill-badge">MySQL</span>
+        <span class="skill-badge">PowerBi</span>
+        <span class="skill-badge">Mongodb</span>
+        <span class="skill-badge">Flask</span>
+        <span class="skill-badge">Scikit</span>
+        <span class="skill-badge">TensorFlow</span>
+      </div>
+      <div class="hero-prompt">
+        <span style="color:var(--green)">$</span>
+        <span id="typewriter"></span>
+        <span class="blink"></span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">↓ scroll to explore</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="projects-grid">
+    <div class="section-header reveal">
+      <div class="section-cmd">ls ./projects</div>
+      <h2 class="section-title">System Architecture &amp; Projects</h2>
+    </div>
+
+    <div class="project-card reveal">
+      <h3 class="project-title">HealthViz — Smart Healthcare Assistant (Deep Learning, AI in Healthcare)</h3>
+      <p class="project-desc">Designed and developed an AI-powered healthcare assistant for medical image analysis and data-driven insights using deep learning techniques.</p>
+      <p class="achievements-label">Key Achievements</p>
+      <ul class="achievement-list">
+        <li>Cleaned and structured large-scale medical image datasets for reliable model training and evaluation</li>
+        <li>Performed exploratory data analysis (EDA) to assess class distribution, detect imbalances, and improve data quality</li>
+        <li>Built preprocessing pipelines to convert raw CSV and image data into structured formats for machine learning workflows</li>
+        <li>Implemented a Flask-based backend to serve predictions and enable seamless interaction with the model</li>
+      </ul>
+      <div class="tech-tags">
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">Pandas</span>
+        <span class="tech-tag">Flask</span>
+        <span class="tech-tag">TensorFlow</span>
+        <span class="tech-tag">Keras</span>
+        <span class="tech-tag">Pandas</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <h3 class="project-title">System Health Monitoring Dashboard (System Performance, Monitoring, Data Visualization)</h3>
+      <p class="project-desc">Designed and implemented a real-time system health monitoring dashboard to track and analyze performance metrics using data visualization tools.</p>
+      <p class="achievements-label">Key Achievements</p>
+      <ul class="achievement-list">
+        <li>Collected and structured time-series system data using Python</li>
+        <li>Stored and validated metrics in MySQL/MariaDB for accuracy</li>
+        <li>Integrated database with Power BI for near real-time visualization</li>
+        <li>Automated data flow for efficient reporting and analysis</li>
+      </ul>
+      <div class="tech-tags">
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">MySQL Workbench</span>
+        <span class="tech-tag">MariaDB Connector</span>
+        <span class="tech-tag">Power BI</span>
+        <span class="tech-tag">OS Library</span>
+        <span class="tech-tag">Dax Functions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="achievements-wrapper">
+    <div class="section-header reveal">
+      <div class="section-cmd">cat achievements.log</div>
+      <h2 class="section-title">Impact &amp; Achievements</h2>
+    </div>
+
+    <div class="ach-category reveal">
+      <div class="ach-category-title">Hackathons &amp; Competitions</div>
+      <div class="ach-grid">
+        <div class="ach-card">
+          <div class="ach-card-title">Amazon ML Hackathon 2025</div>
+          <div class="ach-stat">Ranked <strong>350th</strong> out of <strong>84,000+</strong> participants</div>
+          <div class="ach-stat">Developed Multimodal AI model improving prediction accuracy significantly</div>
+          <div class="ach-stat">Handled 50GB+ image dataset efficiently under compute limits</div>
+        </div>
+
+        <div class="ach-card">
+          <div class="ach-card-title">Murf AI Voice Agents Challenge</div>
+          <div class="ach-stat">Completed 10/10 days (Top 7% — 321 out of 4,459 participants)</div>
+          <div class="ach-stat">Built daily production-ready conversational AI voice agents</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ach-category reveal">
+      <div class="ach-category-title">Major Projects Impact</div>
+      <div class="ach-grid">
+        <div class="ach-card">
+          <div class="ach-card-title">HealthViz — Smart Healthcare Assistant</div>
+          <div class="ach-stat">Achieved 92%+ accuracy in medical image classification</div>
+          <div class="ach-stat">Reduced potential diagnosis time by 65% using Deep Learning</div>
+          <div class="ach-stat">Deployed Flask backend for real-time predictions</div>
+        </div>
+
+        <div class="ach-card">
+          <div class="ach-card-title">System Health Monitoring Dashboard</div>
+          <div class="ach-stat">Enabled real-time system monitoring with sub-5s latency</div>
+          <div class="ach-stat">Reduced server troubleshooting time by ~70%</div>
+          <div class="ach-stat">Automated daily collection of 100,000+ performance logs</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrapper">
+    <div class="section-header reveal">
+      <div class="section-cmd">contact --help</div>
+      <h2 class="section-title">Let's Connect</h2>
+    </div>
+
+    <div class="contact-terminal reveal">
+      <div class="terminal-titlebar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <span class="terminal-title">contact.sh</span>
+      </div>
+      <div class="terminal-body">
+
+        <div class="contact-row">
+          <div class="contact-label">location --current</div>
+          <div style="color:var(--text); font-size:13px; padding-left:4px">📍 Chandigarh, India</div>
+        </div>
+
+        <div class="contact-row">
+          <div class="contact-label">contact --email</div>
+          <a href="mailto:mayankbhardwaj8894@gmail.com" class="contact-value">mayankbhardwaj8894@gmail.com</a>
+        </div>
+       
+        <div class="contact-row">
+            <div class="contact-label">ls ./social-links</div>
+            
+            <div class="social-grid">
+              <!-- GitHub -->
+              <a href="https://github.com/dist34" 
+                 target="_blank" 
+                 rel="noopener" 
+                 class="social-card">
+                <div class="social-icon">
+                    <i class="fa-brands fa-github" style="color: rgb(99, 230, 190);"></i>
+                </div>
+                <div>
+                  <div class="social-name">GitHub</div>
+                  <div class="social-handle">@dist34</div>
+                </div>
+              </a>
+          
+              <!-- LinkedIn -->
+              <a href="https://linkedin.com/in/mayank-bhardwaj" 
+                 target="_blank" 
+                 rel="noopener" 
+                 class="social-card">
+                <div class="social-icon">
+                    <i class="fa-brands fa-github" style="color: rgb(99, 230, 190);"></i>
+                </div>
+                <div>
+                  <div class="social-name">LinkedIn</div>
+                  <div class="social-handle">Mayank-Bhardwaj</div>
+                </div>
+              </a>
+            </div>
+          </div>
+            
+
+              
+
+        <div class="contact-row">
+          <div class="contact-label">send-message</div>
+          <div class="contact-form">
+            <div class="form-group">
+              <label class="form-label">name:</label>
+              <input class="form-input" type="text" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">email:</label>
+              <input class="form-input" type="email" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">message:</label>
+              <textarea class="form-textarea" placeholder="What's on your mind?"></textarea>
+            </div>
+            <button class="form-submit" onclick="handleSend(this)">$ send --message</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Built with <span>terminal aesthetics</span> · &copy; 2026 Alex Chen</p>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a, button, .skill-badge, .nav-links a').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1.8)';
+    ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+    ring.style.opacity = '0.9';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    ring.style.transform = 'translate(-50%,-50%) scale(1)';
+    ring.style.opacity = '0.5';
+  });
+});
+
+/* ── LIVE CANVAS BACKGROUND ── */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], lines = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.pulse = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    this.pulse += 0.02;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+    // Attract to mouse gently
+    const dx = mx - this.x, dy = my - this.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 200) {
+      this.vx += dx * 0.00005;
+      this.vy += dy * 0.00005;
+    }
+    // Dampen
+    this.vx *= 0.999; this.vy *= 0.999;
+  }
+  draw() {
+    const op = this.opacity * (0.7 + 0.3 * Math.sin(this.pulse));
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,255,136,${op})`;
+    ctx.fill();
+  }
+}
+
+// Grid lines
+function drawGrid() {
+  const step = 60;
+  ctx.strokeStyle = 'rgba(0,255,136,0.03)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += step) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += step) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+}
+
+// Init particles
+for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+function connectParticles() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0,255,136,${0.12 * (1 - dist/100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+// Glow near mouse
+function drawMouseGlow() {
+  const grad = ctx.createRadialGradient(mx, my, 0, mx, my, 200);
+  grad.addColorStop(0, 'rgba(0,255,136,0.04)');
+  grad.addColorStop(1, 'rgba(0,255,136,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(mx, my, 200, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+let frame = 0;
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+  drawGrid();
+  drawMouseGlow();
+  particles.forEach(p => { p.update(); p.draw(); });
+  connectParticles();
+  frame++;
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* ── TYPEWRITER ── */
+const phrases = [
+  'git commit -m "shipping production code"',
+  'kubectl get pods --all-namespaces',
+  'docker-compose up --build',
+  'npm run deploy --env=production',
+  'aws s3 sync ./dist s3://portfolio'
+];
+let pi = 0, ci = 0, deleting = false, typeEl = document.getElementById('typewriter');
+function type() {
+  const phrase = phrases[pi];
+  if (!deleting) {
+    typeEl.textContent = phrase.slice(0, ++ci);
+    if (ci === phrase.length) { deleting = true; setTimeout(type, 2000); return; }
+  } else {
+    typeEl.textContent = phrase.slice(0, --ci);
+    if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+  }
+  setTimeout(type, deleting ? 40 : 80);
+}
+type();
+
+/* ── SCROLL REVEAL ── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 100);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ── SEND MESSAGE ── */
+function handleSend(btn) {
+  btn.textContent = '✓ message sent!';
+  btn.style.background = '#00cc66';
+  setTimeout(() => { btn.textContent = '$ send --message'; btn.style.background = ''; }, 3000);
+}
+</script>
+</body>
+</html>
