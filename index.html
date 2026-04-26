@@ -39,6 +39,26 @@
     cursor: none;
   }
 
+  .project-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:15px;
+  }
+  
+  .project-github{
+    color: var(--green);
+    font-size: 24px;
+    text-decoration:none;
+    transition:0.3s ease;
+    flex-shrink:0;
+  }
+  
+  .project-github:hover{
+    color:#ffffff;
+    transform:scale(1.15);
+    text-shadow:0 0 18px var(--green);
+  }
   /* ── CURSOR ── */
   .cursor {
     position: fixed; width: 12px; height: 12px;
@@ -514,15 +534,33 @@
     </div>
 
     <div class="project-card reveal">
-      <h3 class="project-title">HealthViz — Smart Healthcare Assistant (Deep Learning, AI in Healthcare)</h3>
-      <p class="project-desc">Designed and developed an AI-powered healthcare assistant for medical image analysis and data-driven insights using deep learning techniques.</p>
+
+      <div class="project-header">
+        <h3 class="project-title">
+          HealthViz — Smart Healthcare Assistant (Deep Learning, AI in Healthcare)
+        </h3>
+    
+        <a href="https://github.com/dist34/healthviz"
+           target="_blank"
+           class="project-github"
+           title="View GitHub Repository">
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </div>
+    
+      <p class="project-desc">
+        Designed and developed an AI-powered healthcare assistant for medical image analysis and data-driven insights using deep learning techniques.
+      </p>
+    
       <p class="achievements-label">Key Achievements</p>
+    
       <ul class="achievement-list">
         <li>Cleaned and structured large-scale medical image datasets for reliable model training and evaluation</li>
         <li>Performed exploratory data analysis (EDA) to assess class distribution, detect imbalances, and improve data quality</li>
         <li>Built preprocessing pipelines to convert raw CSV and image data into structured formats for machine learning workflows</li>
         <li>Implemented a Flask-based backend to serve predictions and enable seamless interaction with the model</li>
       </ul>
+    
       <div class="tech-tags">
         <span class="tech-tag">Python</span>
         <span class="tech-tag">Pandas</span>
@@ -531,18 +569,37 @@
         <span class="tech-tag">Keras</span>
         <span class="tech-tag">Pandas</span>
       </div>
+    
     </div>
 
     <div class="project-card reveal">
-      <h3 class="project-title">System Health Monitoring Dashboard (System Performance, Monitoring, Data Visualization)</h3>
-      <p class="project-desc">Designed and implemented a real-time system health monitoring dashboard to track and analyze performance metrics using data visualization tools.</p>
+
+      <div class="project-header">
+        <h3 class="project-title">
+          System Health Monitoring Dashboard (System Performance, Monitoring, Data Visualization)
+        </h3>
+    
+        <a href="https://github.com/dist34/system-dashboard"
+           target="_blank"
+           class="project-github"
+           title="View GitHub Repository">
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </div>
+    
+      <p class="project-desc">
+        Designed and implemented a real-time system health monitoring dashboard to track and analyze performance metrics using data visualization tools.
+      </p>
+    
       <p class="achievements-label">Key Achievements</p>
+    
       <ul class="achievement-list">
         <li>Collected and structured time-series system data using Python</li>
         <li>Stored and validated metrics in MySQL/MariaDB for accuracy</li>
         <li>Integrated database with Power BI for near real-time visualization</li>
         <li>Automated data flow for efficient reporting and analysis</li>
       </ul>
+    
       <div class="tech-tags">
         <span class="tech-tag">Python</span>
         <span class="tech-tag">MySQL Workbench</span>
@@ -551,9 +608,8 @@
         <span class="tech-tag">OS Library</span>
         <span class="tech-tag">Dax Functions</span>
       </div>
+    
     </div>
-  </div>
-</section>
 
 <!-- ACHIEVEMENTS -->
 <section id="achievements">
